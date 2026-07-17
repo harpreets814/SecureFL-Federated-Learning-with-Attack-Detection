@@ -397,37 +397,48 @@ This prevents poisoned updates from entering the global model.
 SecureFL/
 │
 ├── backend/
-│   ├── fl_server.py
-│   ├── api.py
 │   ├── anomaly_detector.py
-│   ├── security.py
-│   ├── trust_manager.py
+│   ├── api.py
+│   ├── fl_server.py
 │   ├── preprocess.py
+│   ├── security.py
 │   ├── train_local.py
-│   └── requirements.txt
+│   ├── trust_manager.py
+│   ├── requirements.txt
 │
 ├── clients/
+│   ├── attacker.py
 │   ├── client1.py
 │   ├── client2.py
 │   ├── client3.py
 │   ├── client4.py
-│   ├── attacker.py
 │   ├── model.py
 │   └── utils.py
 │
 ├── data/
-│   ├── raw_dataset.csv
+│   ├── MPDD.csv
 │   └── processed/
+│       ├── client1.npz
+│       ├── client2.npz
+│       ├── client3.npz
+│       ├── client4.npz
+│       └── attacker.npz
 │
 ├── soc-dashboard/
 │   ├── app/
 │   ├── components/
-│   ├── public/
-│   ├── package.json
+│   ├── lib/
+│   ├── eslint.config.mjs
+│   ├── next-env.d.ts
 │   ├── next.config.ts
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── postcss.config.mjs
 │   └── tsconfig.json
 │
-└── README.md
+├── .gitignore
+├── LICENSE
+├── README.md
 ```
 
 ---
@@ -439,13 +450,7 @@ SecureFL/
 Install:
 
 ```bash
-pip install -r requirements.txt
-```
-
-Generate:
-
-```bash
-pip freeze > requirements.txt
+pip install -r backend/requirements.txt
 ```
 
 ### Core Dependencies
@@ -467,6 +472,8 @@ uvicorn
 Install:
 
 ```bash
+cd soc-dashboard
+
 npm install
 ```
 
@@ -486,6 +493,14 @@ tailwindcss
 
 # ⚙ Installation
 
+## Prerequisites
+
+- Python 3.10 or later
+- Node.js 20 or later
+- npm
+
+---
+
 ## Clone Repository
 
 ```bash
@@ -498,17 +513,33 @@ cd SecureFL
 
 # 🚀 Running the Project
 
-## Start Federated Server
+## 1. Preprocess the Dataset
+
+Before starting the federated learning system, preprocess the dataset to generate the client-specific training files.
 
 ```bash
 cd backend
 
-python fl_server.py
+python preprocess.py
 ```
+
+This generates the processed datasets inside:
+
+```text
+data/
+└── processed/
+    ├── client1.npz
+    ├── client2.npz
+    ├── client3.npz
+    ├── client4.npz
+    └── attacker.npz
+```
+
+> This step only needs to be performed once unless the dataset changes.
 
 ---
 
-## Start FastAPI Backend
+## 2. Start Backend
 
 ```bash
 cd backend
@@ -516,15 +547,16 @@ cd backend
 uvicorn api:app --reload
 ```
 
-Runs on:
-
+Starts the SecureFL backend and exposes the REST API at
 ```text
 http://localhost:8000
 ```
 
 ---
 
-## Start Clients
+## 3. Start Clients
+
+Run each client in a separate terminal.
 
 ```bash
 cd clients
@@ -543,7 +575,9 @@ python attacker.py
 
 ---
 
-## Start Dashboard
+## 4. Start Dashboard
+
+In a new terminal:
 
 ```bash
 cd soc-dashboard
@@ -661,15 +695,10 @@ SecureFL successfully:
 
 # 📸 Screenshots
 
-Add dashboard screenshots here.
-
-```text
-screenshots/
-├── dashboard.png
-├── clients.png
-├── metrics.png
-└── alerts.png
-```
+![dashboard](screenshots/dashboard.png)
+![clients](screenshots/clients.png)
+![alerts](screenshots/alerts.png)
+![metrics](screenshots/metrics.png)
 
 ---
 
